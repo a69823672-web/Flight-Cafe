@@ -17,11 +17,7 @@ fetch("products.json")
 });
 
 // لوگو
-const savedLogo = localStorage.getItem("logo");
 
-if(savedLogo){
-    logoPreview.src = savedLogo;
-}
 
 // ویدئو
 const savedVideo = localStorage.getItem("video");
