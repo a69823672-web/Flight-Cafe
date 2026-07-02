@@ -1,28 +1,38 @@
-let products = JSON.parse(localStorage.getItem("products")) || [];
-
+let products = [];
 let currentCategory = "all";
 
 const menu = document.getElementById("menu");
 const logoPreview = document.getElementById("logoPreview");
 const cafeVideo = document.getElementById("cafeVideo");
 
+// خواندن محصولات از فایل JSON
+fetch("products.json")
+.then(response => response.json())
+.then(data => {
+    products = data;
+    renderProducts();
+})
+.catch(error => {
+    console.error("خطا در خواندن products.json", error);
+});
+
 // لوگو
 const savedLogo = localStorage.getItem("logo");
 
-if (savedLogo) {
+if(savedLogo){
     logoPreview.src = savedLogo;
 }
 
 // ویدئو
 const savedVideo = localStorage.getItem("video");
 
-if (savedVideo) {
+if(savedVideo){
     cafeVideo.src = savedVideo;
-} else {
+}else{
     cafeVideo.src = "video.mp4";
 }
 
-function renderProducts() {
+function renderProducts(){
 
     menu.innerHTML = "";
 
@@ -30,17 +40,17 @@ function renderProducts() {
         ? products
         : products.filter(item => item.category === currentCategory);
 
-    if (list.length === 0) {
+    if(list.length === 0){
 
         menu.innerHTML = `
         <h2 style="text-align:center;color:#d4af37;padding:40px;">
-        هنوز محصولی ثبت نشده است
+        محصولی وجود ندارد
         </h2>`;
 
         return;
     }
 
-    list.forEach((item, index) => {
+    list.forEach((item,index)=>{
 
         const card = document.createElement("div");
 
@@ -62,8 +72,6 @@ function renderProducts() {
     });
 
 }
-
-renderProducts();
 function filterCategory(category){
 
     currentCategory = category;
@@ -71,6 +79,13 @@ function filterCategory(category){
     document.querySelectorAll(".cat").forEach(btn=>{
         btn.classList.remove("active");
     });
+
+    const activeBtn = [...document.querySelectorAll(".cat")]
+        .find(btn => btn.textContent.trim() === category || (category === "all" && btn.textContent.trim() === "همه"));
+
+    if(activeBtn){
+        activeBtn.classList.add("active");
+    }
 
     renderProducts();
 
@@ -104,109 +119,16 @@ function closeAdmin(){
 
 function saveProduct(){
 
-    const name = document.getElementById("name").value.trim();
-
-    const price = document.getElementById("price").value.trim();
-
-    const category = document.getElementById("category").value;
-
-    const logoFile = document.getElementById("logo").files[0];
-
-    const videoFile = document.getElementById("video").files[0];
-
-    // ثبت محصول
-    if(name !== "" && price !== ""){
-
-        products.push({
-
-            name: name,
-
-            price: price,
-
-            category: category
-
-        });
-
-        localStorage.setItem(
-            "products",
-            JSON.stringify(products)
-        );
-
-    }
-
-    // ذخیره لوگو
-    if(logoFile){
-
-        const logoReader = new FileReader();
-
-        logoReader.onload = function(e){
-
-            logoPreview.src = e.target.result;
-
-            localStorage.setItem(
-                "logo",
-                e.target.result
-            );
-
-        };
-
-        logoReader.readAsDataURL(logoFile);
-
-    }
-
-    // ذخیره ویدئو
-    if(videoFile){
-
-        const videoReader = new FileReader();
-
-        videoReader.onload = function(e){
-
-            cafeVideo.src = e.target.result;
-
-            localStorage.setItem(
-                "video",
-                e.target.result
-            );
-
-        };
-
-        videoReader.readAsDataURL(videoFile);
-
-    }
-
-    renderProducts();
-
-    document.getElementById("name").value = "";
-    document.getElementById("price").value = "";
-
-    alert("اطلاعات ذخیره شد.");
+    alert(
+        "در نسخه products.json باید محصولات را داخل فایل products.json ویرایش کنید."
+    );
 
     closeAdmin();
 
 }
 function deleteProduct(index){
 
-    const pass = prompt("رمز مدیریت را وارد کنید");
-
-    if(pass !== "4030"){
-        alert("رمز اشتباه است");
-        return;
-    }
-
-    if(!confirm("آیا از حذف این محصول مطمئن هستید؟")){
-        return;
-    }
-
-    products.splice(index, 1);
-
-    localStorage.setItem(
-        "products",
-        JSON.stringify(products)
-    );
-
-    renderProducts();
-
-    alert("محصول حذف شد.");
+    alert("برای حذف محصول باید فایل products.json را ویرایش کنید.");
 
 }
 
